@@ -1,11 +1,13 @@
 import os
 
 def mostrarMenu():
-    print("+-----MENU----+")
-    print("| 1 - Inserir |")
-    print("| 2 - Listar  |")
-    print("| 3 - Sair    |")
-    print("+-------------+")
+    print("+----------MENU---------+")
+    print("| 1 - Inserir Registo   |")
+    print("| 2 - Listar Registos   |")
+    print("| 3 - Atualizar Registo |")
+    print("| 4 - Eliminar Registo  |")
+    print("| 5 - Sair              |")
+    print("+-----------------------+")
     opcao = input("Escolha uma opção: ")
     return opcao
 
@@ -41,9 +43,9 @@ def listarAlunos(lstAlunos:list):
 
 while True:
     os.system("cls")
-    opcao = mostrarMenu()
+    opcaoMenu = mostrarMenu()
 
-    match opcao:
+    match opcaoMenu:
         case "1":
             os.system("cls")
             adicionarAluno(alunos)
@@ -52,7 +54,9 @@ while True:
             os.system("cls")
             listarAlunos(alunos)
             input()
-        case "3":
+        case "5":
             break
         case _:
-            print("Opção inválida")
+            os.system("cls")
+            print("Opção inválida!")
+            input()
