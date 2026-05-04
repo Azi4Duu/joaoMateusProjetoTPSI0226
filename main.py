@@ -27,7 +27,7 @@ def adicionarAluno(lstAlunos:list):
     lstAlunos.append(aluno)
     print(f"\nO Aluno {aluno["Nome"]} foi registado com sucesso com o ID: {aluno["Id"]}!")
 
-def ordenarAlunos(lstAlunos:list, campo, crescente=True):
+def ordenarAlunos(lstAlunos:list, campo:str, crescente=True):
     n=len(lstAlunos)
     lista = lstAlunos
 
@@ -41,12 +41,23 @@ def ordenarAlunos(lstAlunos:list, campo, crescente=True):
             
             if crescente:
                 if val1 > val2:
-                    lista[j][campo], lista[j+1][campo] = lista[j+1][campo], lista[j][campo]
+                    lista[j], lista[j+1] = lista[j+1], lista[j]
             else:
                 if val1 < val2:
-                    lista[j][campo], lista[j+1][campo] = lista[j+1][campo], lista[j][campo]
+                    lista[j], lista[j+1] = lista[j+1], lista[j]
 
     return lista
+
+def pesquisaNome(lstAlunos:list, nomeProcurado:str):
+    encontrados = []
+    nomeProcurado = nomeProcurado.lower()
+
+    for aluno in lstAlunos:
+        if nomeProcurado in aluno["Nome"].lower():
+            encontrados.append(aluno)
+    
+    return encontrados
+
 
 def listarAlunos(lstAlunos:list):
 
@@ -66,12 +77,24 @@ def listarAlunos(lstAlunos:list):
             
         match opcaoListarAlunos:
             case "1":
-                for aluno in lstAlunos:
-                    print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+                listaOrdenada = ordenarAlunos(alunos,"Id", True)
+                for aluno in listaOrdenada:
+                     print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
             case "2":
                 listaOrdenada = ordenarAlunos(alunos,"Nome", True)
                 for aluno in listaOrdenada:
                      print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+            case "3":
+                return
+            case "4":
+                nomeProcura = input("Indique o Nome: ")
+                resultados = pesquisaNome(alunos, nomeProcura)
+
+                if len(resultados) > 0:
+                    for aluno in resultados:
+                        print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+                else:
+                    print("Não foi encontrado nenhum Aluno com esse nome!")
 
     else:
         print("A lista de Alunos está vazia!")
