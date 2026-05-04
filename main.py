@@ -27,7 +27,26 @@ def adicionarAluno(lstAlunos:list):
     lstAlunos.append(aluno)
     print(f"\nO Aluno {aluno["Nome"]} foi registado com sucesso com o ID: {aluno["Id"]}!")
 
+def ordenarAlunos(lstAlunos:list, campo, crescente=True):
+    n=len(lstAlunos)
+    lista = lstAlunos
 
+    for i in range(n):
+        for j in range(0, n -1):
+            val1 = lista[j][campo]
+            val2 = lista[j+1][campo]
+
+            if campo == "Nota":
+                val1, val2 = float(val1), float(val2)
+            
+            if crescente:
+                if val1 > val2:
+                    lista[j][campo], lista[j+1][campo] = lista[j+1][campo], lista[j][campo]
+            else:
+                if val1 < val2:
+                    lista[j][campo], lista[j+1][campo] = lista[j+1][campo], lista[j][campo]
+
+    return lista
 
 def listarAlunos(lstAlunos:list):
 
@@ -41,8 +60,19 @@ def listarAlunos(lstAlunos:list):
         print("| 5 - Listar todos os Alunos     |")
         print("+--------------------------------+")
 
-        for aluno in lstAlunos:
-            print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+        opcaoListarAlunos = input("Escolha uma opção: ")
+        while opcaoListarAlunos != "1" and opcaoListarAlunos != "2" and opcaoListarAlunos != "3" and opcaoListarAlunos != "4" and opcaoListarAlunos != "5":
+            opcaoListarAlunos = input("Escolha uma opção: ")
+            
+        match opcaoListarAlunos:
+            case "1":
+                for aluno in lstAlunos:
+                    print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+            case "2":
+                listaOrdenada = ordenarAlunos(alunos,"Nome", True)
+                for aluno in listaOrdenada:
+                     print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+
     else:
         print("A lista de Alunos está vazia!")
         resposta = input("Pretende adicionar um aluno (s/n)?")
