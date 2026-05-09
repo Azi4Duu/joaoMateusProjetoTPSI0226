@@ -205,15 +205,39 @@ def atualizarRegisto(lstAlunos:list):
         confirmar = input("Pretende mesmo editar este aluno? (s/n): ").lower()
         
         if confirmar == "s":
-            novoNome = input(f"Novo Nome [{alunoEncontrado['Nome']}]: ")
+            novoNome = input(f"Novo Nome [{alunoEncontrado["Nome"]}]: ")
             if novoNome: alunoEncontrado["Nome"] = novoNome
 
-            novoEmail = input(f"Novo Email [{alunoEncontrado['Email']}]: ")
-            if novoEmail: alunoEncontrado["Email"] = novoEmail
+            while True:
+                novoEmail = input(f"Novo Email [{alunoEncontrado["Email"]}]: ")
+                if not novoEmail:
+                    break
+                if validarEmail(novoEmail):
+                    alunoEncontrado["Email"] = novoEmail
+                    break
+                print("Email inválido!")
+            
+            while True:
+                novoTelefone = input(f"Novo Telefone [{alunoEncontrado["Telefone"]}]: ")
+                if not novoTelefone:
+                    break
+                if validarTelefone(novoTelefone):
+                    alunoEncontrado["Telefone"] = novoTelefone
+                    break
+                print("Telefone inválido!")
+            
+            while True:
+                novaData = input(f"Nova Data de Nascimento DD/MM/AAAA [{alunoEncontrado["DataDeNascimento"]}]: ")
+                if not novaData:
+                    break
+                if validarData(novaData):
+                    alunoEncontrado["Data"] = novaData
+                    break
+                print("Data inválida!")
 
             while True:
                 try:
-                    novaNota = input(f"Nova Nota [{alunoEncontrado['Nota']}]: ")
+                    novaNota = input(f"Nova Nota [{alunoEncontrado["Nota"]}]: ")
                     if novaNota:
                         alunoEncontrado["Nota"] = float(novaNota)
                     break
@@ -232,7 +256,7 @@ def eliminarRegisto(lstAlunos:list):
 
     if aluno:
         print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
-        confimar = input("Tem a certeza que deseja eliminar este registo (s/n)? ").lower
+        confimar = input("Tem a certeza que deseja eliminar este registo (s/n)? ").lower()
         if confimar == "s":
             lstAlunos.remove(aluno)
             print("Registo eliminado com sucesso!")
@@ -264,7 +288,7 @@ def mostrarEstatistica(lstAlunos:list):
 
 def guardarFicheiro(lstAlunos:list):
     try:
-        with open("alunos.json", "w", encoding="utff-8") as ficheiro:
+        with open("alunos.json", "w", encoding="utf-8") as ficheiro:
             json.dump(lstAlunos, ficheiro, indent="   ", ensure_ascii=True)
         print("Dados guardados com sucesso!")
     except Exception as erro:
@@ -295,10 +319,12 @@ while True:
             os.system("cls")
             mostrarEstatistica(alunos)
             input()
-        case "7":
+        case "6":
             os.system("cls")
             guardarFicheiro(alunos)
             input()
+        case "7":
+            break
         case _:
             os.system("cls")
             print("Opção inválida!")
