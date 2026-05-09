@@ -1,13 +1,26 @@
 import os
 
-def mostrarMenu():
-    print("+----------MENU---------+")
-    print("| 1 - Inserir Registo   |")
-    print("| 2 - Listar Registos   |")
-    print("| 3 - Atualizar Registo |")
-    print("| 4 - Eliminar Registo  |")
-    print("| 5 - Sair              |")
-    print("+-----------------------+")
+def mostrarMenu(opc:str):
+    if opc == "1":
+        print("+----------MENU---------+")
+        print("| 1 - Inserir Registo   |")
+        print("| 2 - Listar Registos   |")
+        print("| 3 - Atualizar Registo |")
+        print("| 4 - Eliminar Registo  |")
+        print("| 5 - Estatísticas      |")
+        print("| 6 - Guardar Dados     |")
+        print("| 7 - Sair              |")
+        print("+-----------------------+")
+    elif opc == "2":
+        print("+-----------MENU LISTAR----------+")
+        print("| 1 - Listar os Alunos por ID    |")
+        print("| 2 - Listar os Alunos por nome  |")
+        print("| 3 - Listar os Alunos por nota  |")
+        print("| 4 - Pesquisar Aluno por nome   |")
+        print("| 5 - Pesquisar Aluno por ID     |")
+        print("| 6 - Voltar                     |")
+        print("+--------------------------------+")
+
     opcao = input("Escolha uma opção: ")
     return opcao
 
@@ -29,7 +42,7 @@ def adicionarAluno(lstAlunos:list):
 
 def ordenarAlunos(lstAlunos:list, campo:str, crescente=True):
     n=len(lstAlunos)
-    lista = lstAlunos
+    lista = lstAlunos[:]
 
     for i in range(n):
         for j in range(0, n -1):
@@ -58,34 +71,57 @@ def pesquisaNome(lstAlunos:list, nomeProcurado:str):
     
     return encontrados
 
+def pesquisaId(lstAlunos:list, idProcurado:str):
+
+    try:
+        alvo = int(idProcurado)
+    except ValueError:
+        print("O ID fornecido não é um número válido.")
+        return None
+    
+    listaOrdenada = ordenarAlunos(lstAlunos, "Id", True)
+    baixo = 0
+    alto = len(listaOrdenada) - 1
+
+    while baixo <= alto:
+        meio = (baixo + alto) // 2
+        valorMeio = int(listaOrdenada[meio]["Id"])
+        alvo = int(idProcurado)
+
+        if valorMeio == alvo:
+            return listaOrdenada[meio]
+        elif valorMeio < alvo:
+            baixo = meio + 1
+        else:
+            alto = meio - 1
+    
+    return None
 
 def listarAlunos(lstAlunos:list):
-
     if len(lstAlunos) > 0:
 
-        print("+-----------MENU LISTAR----------+")
-        print("| 1 - Listar os Alunos por ID    |")
-        print("| 2 - Listar os Alunos por nome  |")
-        print("| 3 - Pesquisar Aluno por ID     |")
-        print("| 4 - Pesquisar Aluno por nome   |")
-        print("| 5 - Listar todos os Alunos     |")
-        print("+--------------------------------+")
+        opcaoListarAlunos = mostrarMenu("2")
+        os.system("cls")
 
-        opcaoListarAlunos = input("Escolha uma opção: ")
-        while opcaoListarAlunos != "1" and opcaoListarAlunos != "2" and opcaoListarAlunos != "3" and opcaoListarAlunos != "4" and opcaoListarAlunos != "5":
-            opcaoListarAlunos = input("Escolha uma opção: ")
+        while opcaoListarAlunos != "1" and opcaoListarAlunos != "2" and opcaoListarAlunos != "3" and opcaoListarAlunos != "4" and opcaoListarAlunos != "5" and opcaoListarAlunos != "6":
+            opcaoListarAlunos = mostrarMenu("2")
             
         match opcaoListarAlunos:
             case "1":
                 listaOrdenada = ordenarAlunos(alunos,"Id", True)
+
                 for aluno in listaOrdenada:
                      print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
             case "2":
                 listaOrdenada = ordenarAlunos(alunos,"Nome", True)
+
                 for aluno in listaOrdenada:
                      print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
             case "3":
-                return
+                listaOrdenada = ordenarAlunos(alunos,"Nota", True)
+
+                for aluno in listaOrdenada:
+                     print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
             case "4":
                 nomeProcura = input("Indique o Nome: ")
                 resultados = pesquisaNome(alunos, nomeProcura)
@@ -95,17 +131,18 @@ def listarAlunos(lstAlunos:list):
                         print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
                 else:
                     print("Não foi encontrado nenhum Aluno com esse nome!")
+            case "5":
+                idBusca = input("Indique o ID do aluno: ")
+                resultado = pesquisaId(lstAlunos, idBusca)
 
+                if resultado:
+                    print(print(f"\nID: {resultado["Id"]} | Nome: {resultado["Nome"]} | Email: {resultado["Email"]} | Telefone: {resultado["Telefone"]} | Data Nascimento: {resultado["DataDeNascimento"]} | Nota: {resultado["Nota"]}"))
+                else:
+                    print("Aluno não encontrado!")
+            case "6":
+                return
     else:
         print("A lista de Alunos está vazia!")
-        resposta = input("Pretende adicionar um aluno (s/n)?")
-        while resposta.lower() != "s" and resposta.lower() != "n":
-            print("A sua resposta não é válida!")
-            resposta = input("Pretende adicionar um aluno (s/n)?")
-        
-        if resposta == "s":
-            os.system("cls")
-            adicionarAluno(lstAlunos)
 
 def atualizarRegisto(lstAlunos:list):
     idResposta = input("Indique o id do Aluno que pretende atualizar: ")
@@ -123,7 +160,7 @@ def atualizarRegisto(lstAlunos:list):
 
 while True:
     os.system("cls")
-    opcaoMenu = mostrarMenu()
+    opcaoMenu = mostrarMenu("1")
 
     match opcaoMenu:
         case "1":
@@ -136,7 +173,7 @@ while True:
             input()
         case "3":
             atualizarRegisto(alunos)
-        case "5":
+        case "7":
             break
         case _:
             os.system("cls")
