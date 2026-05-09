@@ -1,4 +1,5 @@
 import os
+import re
 
 def mostrarMenu(opc:str):
     if opc == "1":
@@ -26,16 +27,52 @@ def mostrarMenu(opc:str):
 
 alunos = []
 
+def validarEmail(email:str):
+    reg = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return re.match(reg, email) is not None
+
+def validarTelefone(telefone:str):
+    reg = r"^9[1236]\d{7}$"
+    return re.match(reg, telefone) is not None
+
+def validarData(data:str):
+    reg = r"\d{1,2}\/\d{1,2}\/\d{4}"
+    return re.match(reg, data) is not None
+
 def adicionarAluno(lstAlunos:list):
     novoId = str(len(alunos) + 1)
     print("+------------+")
     print("|NOVO REGISTO|")
     print("+------------+\n")
     nome = input("Nome: ")
-    email = input("Email: ")
-    telefone = input("Telefone: ")
-    dataNascimento = input("Data de Nascimento: ")
-    nota = input("Nota: ")
+    
+    while True:
+        email = input("Email: ")
+        if validarEmail(email):
+            break
+        print("Email inválido!")
+
+    while True:
+        telefone = input("Telefone: ")
+        if validarTelefone(telefone):
+            break
+        print("Telefone inválido!")
+    
+    while True:
+        dataNascimento = input("Data de Nascimento (DD/MM/AAAA): ")
+        if validarData(dataNascimento):
+            break
+        print("Data inválida!")
+    
+    while True:
+        try:
+            nota = float(input("Nota (0-20): "))
+            if nota >= 0 and nota <= 20:
+                break
+            print("A nota deve estar entre 0 e 20.")
+        except ValueError:
+            print("Nota inválida. Insira um valor númerico!")
+    
     aluno = {"Id" : novoId, "Nome" : nome, "Email" : email, "Telefone" : telefone, "DataDeNascimento" : dataNascimento, "Nota" : nota}
     lstAlunos.append(aluno)
     print(f"\nO Aluno {aluno["Nome"]} foi registado com sucesso com o ID: {aluno["Id"]}!")
