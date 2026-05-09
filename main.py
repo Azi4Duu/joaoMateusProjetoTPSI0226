@@ -1,66 +1,8 @@
 import os
-import re
-import json
-
-def carregarFicheiro():
-    try:
-        with open("alunos.json", "r", encoding="utf-8") as ficheiro:
-            return json.load(ficheiro)
-    except FileNotFoundError:
-        return []
-    except Exception as erro:
-        print(f"Erro ao carregar ficheiro: {erro}")
-        return []
+from funcoes.utilidades import *
+from logica.algoritmos import *
 
 alunos = carregarFicheiro()
-
-def mostrarMenu(opc:str):
-    if opc == "1":
-        print("+----------MENU---------+")
-        print("| 1 - Inserir Registo   |")
-        print("| 2 - Listar Registos   |")
-        print("| 3 - Atualizar Registo |")
-        print("| 4 - Eliminar Registo  |")
-        print("| 5 - Estatísticas      |")
-        print("| 6 - Guardar Dados     |")
-        print("| 7 - Sair              |")
-        print("+-----------------------+")
-    elif opc == "2":
-        print("+-----------MENU LISTAR----------+")
-        print("| 1 - Listar os Alunos por ID    |")
-        print("| 2 - Listar os Alunos por nome  |")
-        print("| 3 - Listar os Alunos por nota  |")
-        print("| 4 - Pesquisar Aluno por nome   |")
-        print("| 5 - Pesquisar Aluno por ID     |")
-        print("| 6 - Voltar                     |")
-        print("+--------------------------------+")
-
-    opcao = input("Escolha uma opção: ")
-    return opcao
-
-def validarEmail(email:str):
-    reg = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return re.match(reg, email) is not None
-
-def validarTelefone(telefone:str):
-    reg = r"^9[1236]\d{7}$"
-    return re.match(reg, telefone) is not None
-
-def validarData(data:str):
-    reg = r"\d{1,2}\/\d{1,2}\/\d{4}"
-    return re.match(reg, data) is not None
-
-def gerarNovoID(lstAlunos:list):
-
-    if not lstAlunos:
-        return "1"
-    
-    idsExistentes = []
-    for aluno in lstAlunos:
-        idsExistentes.append(int(aluno["Id"]))
-    
-    novo = max(idsExistentes) + 1
-    return str(novo)
 
 def adicionarAluno(lstAlunos:list):
     novoId = gerarNovoID(lstAlunos)
@@ -99,63 +41,6 @@ def adicionarAluno(lstAlunos:list):
     aluno = {"Id" : novoId, "Nome" : nome, "Email" : email, "Telefone" : telefone, "DataDeNascimento" : dataNascimento, "Nota" : nota}
     lstAlunos.append(aluno)
     print(f"\nO Aluno {aluno["Nome"]} foi registado com sucesso com o ID: {aluno["Id"]}!")
-
-def ordenarAlunos(lstAlunos:list, campo:str, crescente=True):
-    n=len(lstAlunos)
-    lista = lstAlunos[:]
-
-    for i in range(n):
-        for j in range(0, n -1):
-            val1 = lista[j][campo]
-            val2 = lista[j+1][campo]
-
-            if campo == "Nota":
-                val1, val2 = float(val1), float(val2)
-            
-            if crescente:
-                if val1 > val2:
-                    lista[j], lista[j+1] = lista[j+1], lista[j]
-            else:
-                if val1 < val2:
-                    lista[j], lista[j+1] = lista[j+1], lista[j]
-
-    return lista
-
-def pesquisaNome(lstAlunos:list, nomeProcurado:str):
-    encontrados = []
-    nomeProcurado = nomeProcurado.lower()
-
-    for aluno in lstAlunos:
-        if nomeProcurado in aluno["Nome"].lower():
-            encontrados.append(aluno)
-    
-    return encontrados
-
-def pesquisaId(lstAlunos:list, idProcurado:str):
-
-    try:
-        alvo = int(idProcurado)
-    except ValueError:
-        print("O ID fornecido não é um número válido.")
-        return None
-    
-    listaOrdenada = ordenarAlunos(lstAlunos, "Id", True)
-    baixo = 0
-    alto = len(listaOrdenada) - 1
-
-    while baixo <= alto:
-        meio = (baixo + alto) // 2
-        valorMeio = int(listaOrdenada[meio]["Id"])
-        alvo = int(idProcurado)
-
-        if valorMeio == alvo:
-            return listaOrdenada[meio]
-        elif valorMeio < alvo:
-            baixo = meio + 1
-        else:
-            alto = meio - 1
-    
-    return None
 
 def listarAlunos(lstAlunos:list):
     if len(lstAlunos) > 0:
@@ -302,14 +187,6 @@ def mostrarEstatistica(lstAlunos:list):
     print(f"Melhor Nota: {notaMax}")
     print(f"Pior Nota: {notaMin}")
     print(f"Total de Alunos: {len(lstAlunos)}")
-
-def guardarFicheiro(lstAlunos:list):
-    try:
-        with open("alunos.json", "w", encoding="utf-8") as ficheiro:
-            json.dump(lstAlunos, ficheiro, indent="   ", ensure_ascii=True)
-        print("Dados guardados com sucesso!")
-    except Exception as erro:
-        print(f"Erro ao guardar os dados: {erro}")
 
 while True:
     os.system("cls")
