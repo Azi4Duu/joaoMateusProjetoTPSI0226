@@ -145,18 +145,53 @@ def listarAlunos(lstAlunos:list):
         print("A lista de Alunos está vazia!")
 
 def atualizarRegisto(lstAlunos:list):
-    idResposta = input("Indique o id do Aluno que pretende atualizar: ")
-    atualizar = ""
-    while atualizar != "s":
-        i=0
-        if lstAlunos[i]["Id"] == idResposta:
-            print(f"ID: {lstAlunos[i]["Id"]} | Nome: {lstAlunos[i]["Nome"]} | Email: {lstAlunos[i]["Email"]} | Telefone: {lstAlunos[i]["Telefone"]} | Data Nascimento: {lstAlunos[i]["DataDeNascimento"]} | Nota: {lstAlunos[i]["Nota"]}")
-            atualizar = input("Pretnde editar este aluno?")
-        i+=1
-    for atributo in lstAlunos[int(idResposta)]:
-        resposta = input(f"Pretende atulizar {atributo} do Aluno?")
-        
+    idResposta = input("Indique o ID do Aluno que pretende atualizar: ")
+    alunoEncontrado = None
 
+    alunoEncontrado = pesquisaId(lstAlunos, idResposta)
+
+    if alunoEncontrado:
+        print(f"\n--- A Editar Aluno (ID: {alunoEncontrado['Id']}) ---")
+        print(f"Nome Atual: {alunoEncontrado['Nome']}")
+        
+        confirmar = input("Pretende mesmo editar este aluno? (s/n): ").lower()
+        
+        if confirmar == "s":
+            novoNome = input(f"Novo Nome [{alunoEncontrado['Nome']}]: ")
+            if novoNome: alunoEncontrado["Nome"] = novoNome
+
+            novoEmail = input(f"Novo Email [{alunoEncontrado['Email']}]: ")
+            if novoEmail: alunoEncontrado["Email"] = novoEmail
+
+            while True:
+                try:
+                    novaNota = input(f"Nova Nota [{alunoEncontrado['Nota']}]: ")
+                    if novaNota:
+                        alunoEncontrado["Nota"] = float(novaNota)
+                    break
+                except ValueError:
+                    print("A nota deve ser um número!")
+
+            print("\nRegisto atualizado com sucesso!")
+        else:
+            print("Edição cancelada.")
+    else:
+        print("Aluno não encontrado!")
+
+def eliminarRegisto(lstAlunos:list):
+    idBusca = input("Indique o ID do Aluno a eliminar: ")
+    aluno = pesquisaId(lstAlunos, idBusca)
+
+    if aluno:
+        print(f"\nID: {aluno["Id"]} | Nome: {aluno["Nome"]} | Email: {aluno["Email"]} | Telefone: {aluno["Telefone"]} | Data Nascimento: {aluno["DataDeNascimento"]} | Nota: {aluno["Nota"]}")
+        confimar = input("Tem a certeza que deseja eliminar este registo (s/n)? ").lower
+        if confimar == "s":
+            lstAlunos.remove(aluno)
+            print("Registo eliminado com sucesso!")
+        else:
+            print("Operação cancelada!")
+    else:
+        print("Aluno não encontrado!")
 
 while True:
     os.system("cls")
