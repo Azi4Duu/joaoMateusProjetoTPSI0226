@@ -50,8 +50,20 @@ def validarData(data:str):
     reg = r"\d{1,2}\/\d{1,2}\/\d{4}"
     return re.match(reg, data) is not None
 
+def gerarNovoID(lstAlunos:list):
+
+    if not lstAlunos:
+        return "1"
+    
+    idsExistentes = []
+    for aluno in lstAlunos:
+        idsExistentes.append(int(aluno["Id"]))
+    
+    novo = max(idsExistentes) + 1
+    return str(novo)
+
 def adicionarAluno(lstAlunos:list):
-    novoId = str(len(alunos) + 1)
+    novoId = gerarNovoID(lstAlunos)
     print("+------------+")
     print("|NOVO REGISTO|")
     print("+------------+\n")
@@ -199,7 +211,7 @@ def atualizarRegisto(lstAlunos:list):
     alunoEncontrado = pesquisaId(lstAlunos, idResposta)
 
     if alunoEncontrado:
-        print(f"\n--- A Editar Aluno (ID: {alunoEncontrado['Id']}) ---")
+        print(f"A Editar Aluno (ID: {alunoEncontrado['Id']})")
         print(f"Nome Atual: {alunoEncontrado['Nome']}")
         
         confirmar = input("Pretende mesmo editar este aluno? (s/n): ").lower()
@@ -231,16 +243,21 @@ def atualizarRegisto(lstAlunos:list):
                 if not novaData:
                     break
                 if validarData(novaData):
-                    alunoEncontrado["Data"] = novaData
+                    alunoEncontrado["DataDeNascimento"] = novaData
                     break
                 print("Data inválida!")
 
             while True:
-                try:
-                    novaNota = input(f"Nova Nota [{alunoEncontrado["Nota"]}]: ")
-                    if novaNota:
-                        alunoEncontrado["Nota"] = float(novaNota)
+                novaNotaInput = input(f"Nova Nota [{alunoEncontrado["Nota"]}]: ")
+                if not novaNotaInput:
                     break
+                try:
+                    novaNota = float(novaNotaInput)
+                    if novaNota >= 0 and novaNota <= 20:
+                        alunoEncontrado["Nota"] = novaNota
+                        break
+                    else:
+                        print("A nota deve estar entre 0 e 20!")
                 except ValueError:
                     print("A nota deve ser um número!")
 
