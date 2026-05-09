@@ -1,5 +1,18 @@
 import os
 import re
+import json
+
+def carregarFicheiro():
+    try:
+        with open("alunos.json", "r", encoding="utf-8") as ficheiro:
+            return json.load(ficheiro)
+    except FileNotFoundError:
+        return []
+    except Exception as erro:
+        print(f"Erro ao carregar ficheiro: {erro}")
+        return []
+
+alunos = carregarFicheiro()
 
 def mostrarMenu(opc:str):
     if opc == "1":
@@ -24,8 +37,6 @@ def mostrarMenu(opc:str):
 
     opcao = input("Escolha uma opção: ")
     return opcao
-
-alunos = []
 
 def validarEmail(email:str):
     reg = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -173,7 +184,7 @@ def listarAlunos(lstAlunos:list):
                 resultado = pesquisaId(lstAlunos, idBusca)
 
                 if resultado:
-                    print(print(f"\nID: {resultado["Id"]} | Nome: {resultado["Nome"]} | Email: {resultado["Email"]} | Telefone: {resultado["Telefone"]} | Data Nascimento: {resultado["DataDeNascimento"]} | Nota: {resultado["Nota"]}"))
+                    print(f"\nID: {resultado["Id"]} | Nome: {resultado["Nome"]} | Email: {resultado["Email"]} | Telefone: {resultado["Telefone"]} | Data Nascimento: {resultado["DataDeNascimento"]} | Nota: {resultado["Nota"]}")
                 else:
                     print("Aluno não encontrado!")
             case "6":
@@ -230,6 +241,35 @@ def eliminarRegisto(lstAlunos:list):
     else:
         print("Aluno não encontrado!")
 
+def mostrarEstatistica(lstAlunos:list):
+    if not lstAlunos:
+        print("A lista de Alunos está vazia!")
+    
+    notas = []
+
+    for aluno in lstAlunos:
+        notas.append(float(aluno["Nota"]))
+
+    media = sum(notas) / len(notas)
+    notaMax = max(notas)
+    notaMin = min(notas)
+
+    print("+------------+")
+    print("|ESTATÍSTICAS|")
+    print("+------------+\n")
+    print(f"Media: {round(media, 2)}")
+    print(f"Melhor Nota: {notaMax}")
+    print(f"Pior Nota: {notaMin}")
+    print(f"Total de Alunos: {len(lstAlunos)}")
+
+def guardarFicheiro(lstAlunos:list):
+    try:
+        with open("alunos.json", "w", encoding="utff-8") as ficheiro:
+            json.dump(lstAlunos, ficheiro, indent="   ", ensure_ascii=True)
+        print("Dados guardados com sucesso!")
+    except Exception as erro:
+        print(f"Erro ao guardar os dados: {erro}")
+
 while True:
     os.system("cls")
     opcaoMenu = mostrarMenu("1")
@@ -244,9 +284,21 @@ while True:
             listarAlunos(alunos)
             input()
         case "3":
+            os.system("cls")
             atualizarRegisto(alunos)
+            input()
+        case "4":
+            os.system("cls")
+            eliminarRegisto(alunos)
+            input()
+        case "5":
+            os.system("cls")
+            mostrarEstatistica(alunos)
+            input()
         case "7":
-            break
+            os.system("cls")
+            guardarFicheiro(alunos)
+            input()
         case _:
             os.system("cls")
             print("Opção inválida!")
